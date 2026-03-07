@@ -2,31 +2,33 @@ import { useEffect, useState } from "react";
 import { buildPuzzle, isSet } from "set.ts";
 import Grid, { Status } from "../components/Grid/Grid";
 import Solutions from "../components/Solutions/Solutions";
+import clsx from "clsx";
+import confetti from "canvas-confetti";
 
 type Props = {
-  date: Date;
+  time: number;
   target?: number;
+  onClick?: () => void;
 };
 
-const DailyPuzzle = ({ date, target = 6 }: Props) => {
-  const [time, setTime] = useState(date.setHours(0, 0, 0, 0));
+const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   const [puzzle, setPuzzle] = useState(buildPuzzle(12, target, time));
   const [highlighted, setHighlighted] = useState<number[]>([]);
   const [status, setStatus] = useState<Status>(Status.guessing);
   const [solutions, setSolutions] = useState<number[][]>([]);
   const [highlightSolution, setHighlightSolution] = useState(-1);
   const [clearNext, setClearNext] = useState(false);
-
-  const advanceTime = (forward: boolean) => {
-    const advance = 1000 * 60 * 60 * 24 * (forward ? 1 : -1);
-    setTime(new Date(time + advance).getTime());
-  };
+  const [solved, setSolved] = useState(false);
 
   useEffect(() => {
     setPuzzle(buildPuzzle(12, 6, time));
   }, [time]);
 
   const handleClick = (cardId: number) => {
+    if (solved) {
+      return;
+    }
+
     if (clearNext) {
       setClearNext(false);
       return setHighlighted([cardId]);
@@ -70,13 +72,24 @@ const DailyPuzzle = ({ date, target = 6 }: Props) => {
     return setStatus(Status.guessing);
   }, [highlighted]);
 
+  useEffect(() => {
+    if (solutions.length === 6) {
+      setSolved(true);
+      setHighlightSolution(-1);
+      setHighlighted([]);
+      confetti();
+      setTimeout(confetti, 500);
+      setTimeout(confetti, 1000);
+    }
+  }, [solutions]);
+
   return (
     <div className="flex flex-col gap-4 justify-center w-screen px-8">
       <div className="flex text-3xl justify-center">Today's Puzzle</div>
       <div className="flex justify-center">
         {new Intl.DateTimeFormat("en-GB", {
           dateStyle: "full",
-        }).format(date)}
+        }).format(time)}
       </div>
       <div className="flex flex-col lg:flex-row-reverse gap-7 justify-center align-middle items-center">
         <div className="">
@@ -96,9 +109,13 @@ const DailyPuzzle = ({ date, target = 6 }: Props) => {
           />
         </div>
       </div>
-      <div className="flex flex-row gap-4 justify-center">
-        <button onClick={() => advanceTime(false)}>Yesterday's Puzzle</button>
-        <button onClick={() => advanceTime(true)}>Tomorrow's Puzzle</button>
+      <div
+        className={clsx("flex-row gap-4 justify-center", {
+          flex: solved,
+          hidden: !solved,
+        })}
+      >
+        <button onClick={onClick}>Yesterday's Puzzle</button>
       </div>
     </div>
   );

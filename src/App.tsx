@@ -1,14 +1,24 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DailyPuzzle from "./pages/DailyPuzzle";
+import { useState } from "react";
 
 function App() {
+  const [time, setTime] = useState(new Date(Date.now()).getTime());
+
+  const advanceTime = (forward: boolean) => {
+    const advance = 1000 * 60 * 60 * 24 * (forward ? 1 : -1);
+    setTime(new Date(time + advance).getTime());
+  };
+
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/daily-set/"
-          element={<DailyPuzzle date={new Date(Date.now())} />}
+          element={
+            <DailyPuzzle time={time} onClick={() => advanceTime(false)} />
+          }
         />
       </Routes>
     </BrowserRouter>

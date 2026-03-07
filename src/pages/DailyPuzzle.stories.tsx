@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import Subject from "./DailyPuzzle";
+import { fn } from "storybook/test";
 
 const meta = {
   component: Subject,
@@ -11,6 +12,7 @@ type Story = StoryObj<typeof Subject>;
 
 export const Default: Story = {
   args: {
-    date: new Date(new Date(2000, 1, 1).setUTCHours(0, 0, 0, 0)),
+    time: new Date(new Date(2000, 1, 1).setUTCHours(0, 0, 0, 0)).getTime(),
+    onClick: fn(),
   },
 };
