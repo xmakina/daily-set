@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { buildPuzzle, isSet } from "set.ts";
 import Grid, { Status } from "../components/Grid/Grid";
 import Solutions from "../components/Solutions/Solutions";
-import clsx from "clsx";
 import confetti from "canvas-confetti";
 
 type Props = {
   time: number;
   target?: number;
-  onClick?: () => void;
+  onClick?: (forward: boolean) => void;
 };
 
 const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
@@ -22,6 +21,13 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
 
   useEffect(() => {
     setPuzzle(buildPuzzle(12, 6, time));
+
+    setHighlighted([]);
+    setStatus(Status.guessing);
+    setSolutions([]);
+    setHighlightSolution(-1);
+    setClearNext(false);
+    setSolved(false);
   }, [time]);
 
   const handleClick = (cardId: number) => {
@@ -84,7 +90,7 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   }, [solutions]);
 
   return (
-    <div className="flex flex-col gap-4 justify-center w-screen px-8">
+    <div className="flex flex-col gap-4 justify-center px-8">
       <div className="flex text-3xl justify-center">Today's Puzzle</div>
       <div className="flex justify-center">
         {new Intl.DateTimeFormat("en-GB", {
@@ -109,13 +115,11 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
           />
         </div>
       </div>
-      <div
-        className={clsx("flex-row gap-4 justify-center", {
-          flex: solved,
-          hidden: !solved,
-        })}
-      >
-        <button onClick={onClick}>Yesterday's Puzzle</button>
+      <div className="flex flex-row gap-4 justify-center">
+        <button onClick={() => onClick(false)}>Yesterday's Puzzle</button>
+        {time < new Date(Date.now()).setHours(0, 0, 0, 0) && (
+          <button onClick={() => onClick(true)}>Tomorrow's Puzzle</button>
+        )}
       </div>
     </div>
   );
