@@ -6,7 +6,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DailyPuzzle date={new Date(Date.now())} />} />
+        <Route
+          path="/daily-set/"
+          element={<DailyPuzzle date={new Date(Date.now())} />}
+        />
       </Routes>
     </BrowserRouter>
   );
