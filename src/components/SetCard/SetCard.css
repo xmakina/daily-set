@@ -1,17 +1,11 @@
-.shape {
-  width: 75%;
-  height: 30%;
-  border: 3px solid currentColor;
-}
-
 .rectangle {
   border-radius: 0.25rem;
 }
 
 .circle {
   border-radius: 9999px;
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 0.8rem;
+  height: 0.8rem;
 }
 
 .diamond {

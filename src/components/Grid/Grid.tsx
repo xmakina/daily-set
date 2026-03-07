@@ -25,7 +25,7 @@ const Grid = ({ puzzle, highlighted, onClick, status }: Props) => {
         <Clickable
           onClick={() => onClick(idx)}
           highlighted={highlighted.indexOf(idx) !== -1}
-          className={clsx("rounded-xl w-28 h-40", {
+          className={clsx("rounded-xl w-14 h-20", {
             "ring-red-500": status === Status.wrong,
             "ring-green-500": status === Status.correct,
           })}

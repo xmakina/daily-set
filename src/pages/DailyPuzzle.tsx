@@ -78,7 +78,7 @@ const DailyPuzzle = ({ date, target = 6 }: Props) => {
           dateStyle: "full",
         }).format(date)}
       </div>
-      <div className="flex flex-row gap-7 justify-center align-middle items-center">
+      <div className="flex flex-col-reverse lg:flex-row gap-7 justify-center align-middle items-center">
         <Solutions
           solutions={solutions}
           highlight={highlightSolution}

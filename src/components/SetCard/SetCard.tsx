@@ -21,12 +21,21 @@ const SetCard = ({ color, shading, shape, number }: Props) => {
     <Card>
       {Array(number).fill(
         <div
-          className={clsx("shape w-14 h-6", shape, shading, {
-            "text-red-500": color === "red",
-            "text-green-600": color === "green",
-            "text-purple-600": color === "purple",
-          })}
-        ></div>,
+          className={clsx(
+            "h-1/4 border-[3px] border-solid border-current",
+            shading,
+            {
+              "text-red-500": color === "red",
+              "text-green-600": color === "green",
+              "text-purple-600": color === "purple",
+              "aspect-square rounded-full": shape === "circle",
+              "aspect-video rounded-sm": shape === "rectangle",
+              "h-1/5 aspect-square rotate-45": shape === "diamond",
+            },
+          )}
+        >
+          &nbsp;
+        </div>,
       )}
     </Card>
   );
