@@ -29,7 +29,7 @@ const Solution = ({ solution, puzzle, highlight = false }: SolutionProps) => {
             .map((idx) => puzzle[idx])
             .map(decode)
             .map((card) => (
-              <div className={clsx("w-14 h-20")}>
+              <div className={clsx("min-w-10 md:w-12 aspect-9/16")}>
                 <SetCard
                   shape={card.shape}
                   shading={card.shading}
@@ -40,21 +40,12 @@ const Solution = ({ solution, puzzle, highlight = false }: SolutionProps) => {
             ))}
         </>
       )}
-      {solution === undefined && (
-        <>
-          <div className="w-14 h-20">
+      {solution === undefined &&
+        Array(3).fill(
+          <div className="min-w-10 md:w-12 aspect-9/16">
             <Card />
-          </div>
-
-          <div className="w-14 h-20">
-            <Card />
-          </div>
-
-          <div className="w-14 h-20">
-            <Card />
-          </div>
-        </>
-      )}
+          </div>,
+        )}
     </div>
   );
 };

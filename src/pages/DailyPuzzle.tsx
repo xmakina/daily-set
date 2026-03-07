@@ -78,19 +78,23 @@ const DailyPuzzle = ({ date, target = 6 }: Props) => {
           dateStyle: "full",
         }).format(date)}
       </div>
-      <div className="flex flex-col-reverse lg:flex-row gap-7 justify-center align-middle items-center">
-        <Solutions
-          solutions={solutions}
-          highlight={highlightSolution}
-          puzzle={puzzle}
-          target={target}
-        />
-        <Grid
-          puzzle={puzzle}
-          highlighted={highlighted}
-          onClick={handleClick}
-          status={status}
-        />
+      <div className="flex flex-col lg:flex-row-reverse gap-7 justify-center align-middle items-center">
+        <div className="">
+          <Grid
+            puzzle={puzzle}
+            highlighted={highlighted}
+            onClick={handleClick}
+            status={status}
+          />
+        </div>
+        <div className="pr-2">
+          <Solutions
+            solutions={solutions}
+            highlight={highlightSolution}
+            puzzle={puzzle}
+            target={target}
+          />
+        </div>
       </div>
       <div className="flex flex-row gap-4 justify-center">
         <button onClick={() => advanceTime(false)}>Yesterday's Puzzle</button>

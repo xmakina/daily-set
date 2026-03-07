@@ -20,12 +20,12 @@ type Props = {
 
 const Grid = ({ puzzle, highlighted, onClick, status }: Props) => {
   return (
-    <div className="grid grid-cols-4 grid-rows-3 gap-4">
+    <div className="grid grid-cols-4 grid-rows-3 gap-4 items-center">
       {puzzle.map(decode).map((card, idx) => (
         <Clickable
           onClick={() => onClick(idx)}
           highlighted={highlighted.indexOf(idx) !== -1}
-          className={clsx("rounded-xl w-14 h-20", {
+          className={clsx("rounded-xl min-w-12 md:w-24 aspect-9/16", {
             "ring-red-500": status === Status.wrong,
             "ring-green-500": status === Status.correct,
           })}
