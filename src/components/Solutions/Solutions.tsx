@@ -18,18 +18,18 @@ type SolutionProps = {
 
 const Solution = ({ solution, puzzle, highlight = false }: SolutionProps) => {
   return (
-    <div className="flex flex-row gap-2">
+    <div
+      className={clsx("flex flex-row gap-2 rounded-2xl", {
+        "ring-4 ring-green-500": highlight,
+      })}
+    >
       {solution && (
         <>
           {solution
             .map((idx) => puzzle[idx])
             .map(decode)
             .map((card) => (
-              <div
-                className={clsx("w-14 h-20", {
-                  "ring-4 ring-green-500": highlight,
-                })}
-              >
+              <div className={clsx("w-14 h-20")}>
                 <SetCard
                   shape={card.shape}
                   shading={card.shading}
@@ -65,7 +65,7 @@ const Solutions = ({ puzzle, highlight = -1, solutions, target }: Props) => {
     .map((_, idx) => solutions[idx]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col sm:grid lg:flex grid-cols-2 grid-rows-3 gap-2 sm:gap-4">
       {display.map((solution, idx) => (
         <Solution
           puzzle={puzzle}
