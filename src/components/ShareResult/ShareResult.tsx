@@ -5,14 +5,12 @@ type Props = {
   time: number;
 };
 
-const hasNavigator = () => Object.keys(navigator).length  > 0
-
 const ShareResult = ({ guesses, time }: Props) => {
   const date = new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
   }).format(time);
 
-  const onShare = async () => {
+  const shareGame = async () => {
     if (navigator.canShare()) {
       await navigator.share({
         title: `I solved the Daily Set in ${guesses} guesses.`,
@@ -22,19 +20,33 @@ const ShareResult = ({ guesses, time }: Props) => {
     }
   };
 
+  const copyText = () => {
+    navigator.clipboard.writeText(
+      `I solved the Daily Set for ${date} in ${guesses} guesses. Can you do better? ${window.location.href}`,
+    );
+  };
+
   return (
     <div className="flex flex-col justify-center items-center gap-4">
       <div>You solved the puzzle in {guesses} guesses!</div>
-      {hasNavigator() && navigator.canShare() && (
-        <div>
+      <div>
+        {navigator["share"] && navigator.canShare() && (
           <Button
-            className="bg-green-700 hover:bg-green-500 text-white font-bold py-2 px-4 rounded"
-            onClick={onShare}
+            className="bg-green-700 hover:bg-green-500 text-white"
+            onClick={shareGame}
           >
             Tell your friends!
           </Button>
-        </div>
-      )}
+        )}
+        {navigator["clipboard"] && (
+          <Button
+            className="bg-green-700 hover:bg-green-500 text-white"
+            onClick={copyText}
+          >
+            Tell your friends!
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
