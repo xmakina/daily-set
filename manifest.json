@@ -1,0 +1,12 @@
+{
+  "name": "Daily Set",
+  "start_url": "https://xmakina.github.io/daily-set/",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "icons/512.png",
+      "type": "image/png",
+      "sizes": "175x175"
+    }
+  ]
+}
