@@ -16,7 +16,6 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   const [status, setStatus] = useState<Status>(Status.guessing);
   const [solutions, setSolutions] = useState<number[][]>([]);
   const [highlightSolution, setHighlightSolution] = useState(-1);
-  const [clearNext, setClearNext] = useState(false);
   const [solved, setSolved] = useState(false);
 
   useEffect(() => {
@@ -26,18 +25,12 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
     setStatus(Status.guessing);
     setSolutions([]);
     setHighlightSolution(-1);
-    setClearNext(false);
     setSolved(false);
   }, [time]);
 
   const handleClick = (cardId: number) => {
     if (solved) {
       return;
-    }
-
-    if (clearNext) {
-      setClearNext(false);
-      return setHighlighted([cardId]);
     }
 
     const inList = highlighted.indexOf(cardId);
@@ -47,6 +40,11 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
         ...highlighted.slice(inList + 1),
       ]);
     }
+
+    if (highlighted.length === 3) {
+      return setHighlighted([cardId]);
+    }
+
     return setHighlighted([...highlighted, cardId]);
   };
 
@@ -65,7 +63,6 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
           setHighlightSolution(existingSolution);
         } else {
           setSolutions([...solutions, [...highlighted]]);
-          setClearNext(true);
         }
 
         return setStatus(Status.correct);
@@ -90,15 +87,15 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   }, [solutions]);
 
   return (
-    <div className="flex flex-col gap-4 justify-center px-8">
+    <div className="flex flex-col gap-4 justify-center w-full">
       <div className="flex text-3xl justify-center">Today's Puzzle</div>
       <div className="flex justify-center">
         {new Intl.DateTimeFormat("en-GB", {
           dateStyle: "full",
         }).format(time)}
       </div>
-      <div className="flex flex-col lg:flex-row-reverse gap-7 justify-center align-middle items-center">
-        <div className="">
+      <div className="flex flex-col gap-7 lg:gap-14 justify-center align-middle items-center lg:flex-row">
+        <div className="flex">
           <Grid
             puzzle={puzzle}
             highlighted={highlighted}
@@ -106,7 +103,7 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
             status={status}
           />
         </div>
-        <div className="pr-2">
+        <div className="flex pr-2">
           <Solutions
             solutions={solutions}
             highlight={highlightSolution}

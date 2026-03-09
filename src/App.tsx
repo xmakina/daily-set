@@ -16,9 +16,7 @@ function App() {
       <Routes>
         <Route
           path="/daily-set/"
-          element={
-            <DailyPuzzle time={time} onClick={advanceTime} />
-          }
+          element={<DailyPuzzle time={time} onClick={advanceTime} />}
         />
       </Routes>
     </BrowserRouter>

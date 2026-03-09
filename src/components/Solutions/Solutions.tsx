@@ -19,7 +19,7 @@ type SolutionProps = {
 const Solution = ({ solution, puzzle, highlight = false }: SolutionProps) => {
   return (
     <div
-      className={clsx("flex flex-row gap-2 rounded-2xl", {
+      className={clsx("flex flex-row gap-2 rounded-2xl basis-1/3 lg:basis-0", {
         "ring-4 ring-green-500": highlight,
       })}
     >
@@ -56,7 +56,7 @@ const Solutions = ({ puzzle, highlight = -1, solutions, target }: Props) => {
     .map((_, idx) => solutions[idx]);
 
   return (
-    <div className="flex flex-col sm:grid lg:flex grid-cols-2 grid-rows-3 gap-2 sm:gap-4">
+    <div className="flex flex-row lg:flex-col flex-wrap justify-center gap-4 sm:gap-4">
       {display.map((solution, idx) => (
         <Solution
           puzzle={puzzle}
