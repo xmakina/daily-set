@@ -4,7 +4,7 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "icons/512.png",
+      "src": "https://xmakina.github.io/daily-set/icon.png",
       "type": "image/png",
       "sizes": "175x175"
     }
