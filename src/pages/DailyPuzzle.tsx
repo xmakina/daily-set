@@ -107,13 +107,6 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
         {time < new Date(Date.now()).setHours(0, 0, 0, 0) && (
           <Button onClick={() => onClick(true)}>Tomorrow's Puzzle</Button>
         )}
-        <button
-          onClick={() => {
-            setSolved(true);
-          }}
-        >
-          Solve it
-        </button>
       </div>
     </div>
   );
