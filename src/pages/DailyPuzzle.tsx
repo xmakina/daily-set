@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { buildPuzzle, isSet } from "set.ts";
-import Grid, { Status } from "../components/Grid/Grid";
+import { buildPuzzle } from "set.ts";
 import Solutions from "../components/Solutions/Solutions";
 import confetti from "canvas-confetti";
+import SetGrid, { Status } from "../components/SetGrid/SetGrid";
+import ShareResult from "../components/ShareResult/ShareResult";
+import Button from "../components/Button/Button";
+import clsx from "clsx";
 
 type Props = {
   time: number;
@@ -12,98 +15,85 @@ type Props = {
 
 const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   const [puzzle, setPuzzle] = useState(buildPuzzle(12, target, time));
-  const [highlighted, setHighlighted] = useState<number[]>([]);
-  const [status, setStatus] = useState<Status>(Status.guessing);
   const [solutions, setSolutions] = useState<number[][]>([]);
   const [highlightSolution, setHighlightSolution] = useState(-1);
   const [solved, setSolved] = useState(false);
+  const [status, setStatus] = useState<Status>(Status.guessing);
+
+  const [guesses, setGuesses] = useState(0);
 
   useEffect(() => {
     setPuzzle(buildPuzzle(12, 6, time));
 
-    setHighlighted([]);
-    setStatus(Status.guessing);
     setSolutions([]);
     setHighlightSolution(-1);
     setSolved(false);
   }, [time]);
 
-  const handleClick = (cardId: number) => {
-    if (solved) {
-      return;
-    }
-
-    const inList = highlighted.indexOf(cardId);
-    if (inList > -1) {
-      return setHighlighted([
-        ...highlighted.slice(0, inList),
-        ...highlighted.slice(inList + 1),
-      ]);
-    }
-
-    if (highlighted.length === 3) {
-      return setHighlighted([cardId]);
-    }
-
-    return setHighlighted([...highlighted, cardId]);
-  };
-
   useEffect(() => {
-    if (highlighted.length === 3) {
-      const cards = highlighted.map((idx) => puzzle[idx]);
-      if (isSet(cards[0], cards[1], cards[2])) {
-        const existingSolution = solutions.findIndex(
-          (solution) =>
-            solution.includes(highlighted[0]) &&
-            solution.includes(highlighted[1]) &&
-            solution.includes(highlighted[2]),
-        );
-
-        if (existingSolution !== -1) {
-          setHighlightSolution(existingSolution);
-        } else {
-          setSolutions([...solutions, [...highlighted]]);
-        }
-
-        return setStatus(Status.correct);
-      } else {
-        return setStatus(Status.wrong);
-      }
-    }
-
-    setHighlightSolution(-1);
-    return setStatus(Status.guessing);
-  }, [highlighted]);
-
-  useEffect(() => {
-    if (solutions.length === 6) {
+    if (solutions.length === target) {
       setSolved(true);
-      setHighlightSolution(-1);
-      setHighlighted([]);
-      confetti();
-      setTimeout(confetti, 500);
-      setTimeout(confetti, 1000);
     }
   }, [solutions]);
 
+  useEffect(() => {
+    if (!solved) {
+      return;
+    }
+
+    confetti({ origin: { x: 0.6, y: 0.9 } });
+    setTimeout(() => confetti({ origin: { x: 0.3, y: 0.9 } }), 500);
+    setTimeout(confetti, 1000);
+  }, [solved]);
+
+  const onCorrect = (a: number, b: number, c: number) => {
+    setGuesses(guesses + 1);
+    const existingSolution = solutions.findIndex(
+      (solution) =>
+        solution.includes(a) && solution.includes(b) && solution.includes(c),
+    );
+
+    if (existingSolution !== -1) {
+      setHighlightSolution(existingSolution);
+    } else {
+      setSolutions([...solutions, [...[a, b, c]]]);
+    }
+
+    setStatus(Status.correct);
+  };
+
+  const onWrong = () => {
+    setGuesses(guesses + 1);
+    setStatus(Status.wrong);
+  };
+
+  const onGridClick = () => {
+    setHighlightSolution(-1);
+    setStatus(Status.guessing);
+  };
+
   return (
     <div className="flex flex-col gap-4 justify-center w-full">
-      <div className="flex text-3xl justify-center">Today's Puzzle</div>
+      <div className="flex text-3xl justify-center">Daily Set Puzzle</div>
       <div className="flex justify-center">
-        {new Intl.DateTimeFormat("en-GB", {
+        {new Intl.DateTimeFormat(undefined, {
           dateStyle: "full",
         }).format(time)}
       </div>
+      {solved && <ShareResult guesses={guesses} time={time} />}
       <div className="flex flex-col gap-7 lg:gap-14 justify-center align-middle items-center lg:flex-row">
-        <div className="flex">
-          <Grid
-            puzzle={puzzle}
-            highlighted={highlighted}
-            onClick={handleClick}
-            status={status}
-          />
-        </div>
-        <div className="flex pr-2">
+        {!solved && (
+          <div className="flex w-full max-w-[60vh]">
+            <SetGrid
+              puzzle={puzzle}
+              onCorrect={onCorrect}
+              onWrong={onWrong}
+              onClick={onGridClick}
+              status={status}
+            />
+          </div>
+        )}
+        <div className={clsx("flex", { "basis-1/6": !solved })}>
           <Solutions
             solutions={solutions}
             highlight={highlightSolution}
@@ -113,10 +103,17 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
         </div>
       </div>
       <div className="flex flex-row gap-4 justify-center">
-        <button onClick={() => onClick(false)}>Yesterday's Puzzle</button>
+        <Button onClick={() => onClick(false)}>Yesterday's Puzzle</Button>
         {time < new Date(Date.now()).setHours(0, 0, 0, 0) && (
-          <button onClick={() => onClick(true)}>Tomorrow's Puzzle</button>
+          <Button onClick={() => onClick(true)}>Tomorrow's Puzzle</Button>
         )}
+        <button
+          onClick={() => {
+            setSolved(true);
+          }}
+        >
+          Solve it
+        </button>
       </div>
     </div>
   );

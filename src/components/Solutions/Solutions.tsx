@@ -1,5 +1,4 @@
 import { decode, type Card as CardType } from "set.ts/dist/src/model/SetCard";
-import Card from "../Card/Card";
 import SetCard from "../SetCard/SetCard";
 import clsx from "clsx";
 
@@ -19,33 +18,34 @@ type SolutionProps = {
 const Solution = ({ solution, puzzle, highlight = false }: SolutionProps) => {
   return (
     <div
-      className={clsx("flex flex-row gap-2 rounded-2xl basis-1/3 lg:basis-0", {
-        "ring-4 ring-green-500": highlight,
-      })}
+      className={clsx(
+        "flex flex-row gap-2 rounded-2xl basis-1/3 lg:basis-0 justify-center",
+        {
+          "ring-4 ring-green-500": highlight,
+        },
+      )}
     >
       {solution && (
         <>
           {solution
             .map((idx) => puzzle[idx])
             .map(decode)
-            .map((card) => (
-              <div className={clsx("min-w-10 md:w-12 aspect-9/16")}>
-                <SetCard
-                  shape={card.shape}
-                  shading={card.shading}
-                  number={card.number}
-                  color={card.color}
-                />
-              </div>
+            .map((card, idx) => (
+              <SetCard
+                key={idx}
+                reduced
+                shape={card.shape}
+                shading={card.shading}
+                number={card.number}
+                color={card.color}
+              />
             ))}
         </>
       )}
       {solution === undefined &&
-        Array(3).fill(
-          <div className="min-w-10 md:w-12 aspect-9/16">
-            <Card />
-          </div>,
-        )}
+        Array(3)
+          .fill(true)
+          .map((_, idx) => <SetCard key={idx} reduced />)}
     </div>
   );
 };
@@ -56,9 +56,10 @@ const Solutions = ({ puzzle, highlight = -1, solutions, target }: Props) => {
     .map((_, idx) => solutions[idx]);
 
   return (
-    <div className="flex flex-row lg:flex-col flex-wrap justify-center gap-4 sm:gap-4">
+    <div className="flex flex-row flex-wrap justify-center gap-4 sm:gap-8">
       {display.map((solution, idx) => (
         <Solution
+          key={idx}
           puzzle={puzzle}
           solution={solution}
           highlight={highlight === idx}

@@ -12,14 +12,18 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/daily-set/"
-          element={<DailyPuzzle time={time} onClick={advanceTime} />}
-        />
-      </Routes>
-    </BrowserRouter>
+    <div className="flex flex-col items-center px-8 dark:bg-black bg-white dark:text-white pb-8 pt-2 min-h-screen min-w-screen">
+      <div className="max-w-7xl w-full">
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/daily-set/"
+              element={<DailyPuzzle time={time} onClick={advanceTime} />}
+            />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </div>
   );
 }
 
