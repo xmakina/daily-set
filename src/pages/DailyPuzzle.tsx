@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { buildPuzzle } from "set.ts";
 import Solutions from "../components/Solutions/Solutions";
 import confetti from "canvas-confetti";
