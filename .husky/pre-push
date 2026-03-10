@@ -1,0 +1,2 @@
+npm install --from-lock-file --silent
+npm run build
