@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { buildPuzzle } from "set.ts";
 import Solutions from "../components/Solutions/Solutions";
 import confetti from "canvas-confetti";
@@ -6,6 +6,9 @@ import SetGrid, { Status } from "../components/SetGrid/SetGrid";
 import ShareResult from "../components/ShareResult/ShareResult";
 import Button from "../components/Button/Button";
 import clsx from "clsx";
+import format from "format-duration";
+import HideIcon from "./HideIcon";
+import ShowIcon from "./ShowIcon";
 
 type Props = {
   time: number;
@@ -19,11 +22,26 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   const [highlightSolution, setHighlightSolution] = useState(-1);
   const [solved, setSolved] = useState(false);
   const [status, setStatus] = useState<Status>(Status.guessing);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
+  const [duration, setDuration] = useState(format(0));
+  const [showTimer, setShowTimer] = useState(false);
 
   const [guesses, setGuesses] = useState(0);
 
   useEffect(() => {
+    const interval = setInterval(function () {
+      if (!solved) {
+        setDuration(format(Date.now() - startTime));
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [startTime, solved]);
+
+  useEffect(() => {
     setPuzzle(buildPuzzle(12, 6, time));
+    setStartTime(Date.now());
 
     setSolutions([]);
     setHighlightSolution(-1);
@@ -35,6 +53,14 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
       setSolved(true);
     }
   }, [solutions]);
+
+  useEffect(() => {
+    if (solved) {
+      return setEndTime(Date.now());
+    }
+
+    setEndTime(0);
+  }, [solved]);
 
   useEffect(() => {
     if (!solved) {
@@ -75,12 +101,36 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
   return (
     <div className="flex flex-col gap-4 justify-center w-full">
       <div className="flex text-3xl justify-center">Daily Set Puzzle</div>
-      <div className="flex justify-center">
-        {new Intl.DateTimeFormat(undefined, {
-          dateStyle: "full",
-        }).format(time)}
+      <div className="flex flex-row gap-4 justify-center">
+        <div>
+          {new Intl.DateTimeFormat(undefined, {
+            dateStyle: "full",
+          }).format(time)}
+        </div>
+        <div className="flex justify-center gap-4">
+          <div>
+            <button
+              className="w-6 h-6"
+              onClick={() => setShowTimer(!showTimer)}
+            >
+              {!showTimer && <HideIcon color={"#FFFFFF"} />}
+              {showTimer && <ShowIcon color={"#FFFFFF"} />}
+            </button>
+          </div>
+          <div
+            className={clsx("flex-none tabular-nums", { hidden: !showTimer })}
+          >
+            {duration}
+          </div>
+        </div>
       </div>
-      {solved && <ShareResult guesses={guesses} time={time} />}
+      {solved && (
+        <ShareResult
+          guesses={guesses}
+          time={time}
+          duration={endTime - startTime}
+        />
+      )}
       <div className="flex flex-col gap-7 lg:gap-14 justify-center align-middle items-center lg:flex-row">
         {!solved && (
           <div className="flex w-full max-w-[60vh]">
@@ -108,6 +158,7 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
           <Button onClick={() => onClick(true)}>Tomorrow's Puzzle</Button>
         )}
       </div>
+      {/* <button onClick={() => setSolved(true)}>Solve</button> */}
     </div>
   );
 };

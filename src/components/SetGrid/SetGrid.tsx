@@ -43,6 +43,10 @@ const SetGrid = ({
     }
   }, [highlighted]);
 
+  useEffect(() => {
+    setHighlighted([]);
+  }, [puzzle]);
+
   const handleClick = (cardId: number) => {
     if (solved) {
       return;

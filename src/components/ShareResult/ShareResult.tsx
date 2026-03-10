@@ -1,52 +1,43 @@
+import { useState } from "react";
 import Button from "../Button/Button";
+import format from "format-duration";
 
 type Props = {
   guesses: number;
   time: number;
+  duration: number;
 };
 
-const ShareResult = ({ guesses, time }: Props) => {
+const ShareResult = ({ guesses, time, duration }: Props) => {
+  const [copied, setCopied] = useState(false);
+
   const date = new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
   }).format(time);
 
-  const shareGame = async () => {
-    if (navigator.canShare()) {
-      await navigator.share({
-        title: `I solved the Daily Set in ${guesses} guesses.`,
-        text: `I solved the Daily Set for ${date} in ${guesses} guesses. Can you do better?`,
-        url: window.location.href,
-      });
-    }
-  };
-
   const copyText = () => {
     navigator.clipboard.writeText(
-      `I solved the Daily Set for ${date} in ${guesses} guesses. Can you do better? ${window.location.href}`,
+      `I solved the Daily Set for ${date} in ${format(duration)} and ${guesses} guesses. Can you do better? ${window.location.href}`,
     );
+    setCopied(true);
   };
 
   return (
     <div className="flex flex-col justify-center items-center gap-4">
-      <div>You solved the puzzle in {guesses} guesses!</div>
       <div>
-        {navigator["share"] && navigator.canShare() && (
-          <Button
-            className="bg-green-700 hover:bg-green-500 text-white"
-            onClick={shareGame}
-          >
-            Tell your friends!
-          </Button>
-        )}
-        {navigator["clipboard"] && (
+        You solved the Daily Set in {format(duration)} and {guesses} guesses!
+      </div>
+      {navigator["clipboard"] && (
+        <div>
           <Button
             className="bg-green-700 hover:bg-green-500 text-white"
             onClick={copyText}
           >
-            Tell your friends!
+            {!copied && "Tell your friends!"}
+            {copied && "Copied to your clipboard"}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
