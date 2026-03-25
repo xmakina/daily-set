@@ -98,7 +98,6 @@ const DailyPuzzle = ({
       return setHighlighted([cardId]);
     }
 
-    console.log("guessing", cardId);
     return setHighlighted([...highlighted, cardId]);
   };
 
