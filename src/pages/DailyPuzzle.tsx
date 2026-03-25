@@ -113,7 +113,11 @@ const DailyPuzzle = ({
         <Timer onChange={setDuration} stopped={solved} starting={duration} />
       </div>
       {solved && (
-        <ShareResult guesses={guesses} time={time} duration={duration} />
+        <ShareResult
+          guesses={guesses}
+          duration={duration}
+          date={new Date(today)}
+        />
       )}
       <div className="flex flex-col gap-7 lg:gap-14 justify-center align-middle items-center lg:flex-row">
         {!solved && (
