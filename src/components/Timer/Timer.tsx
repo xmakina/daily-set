@@ -21,7 +21,6 @@ const Timer = ({
   useEffect(() => {
     const interval = setInterval(function () {
       if (!stopped) {
-        console.log("interval");
         setCounter(counter + 1);
       }
     }, 1000);

@@ -84,6 +84,8 @@ const DailyPuzzle = ({
       return;
     }
 
+    setStatus(Status.guessing);
+
     const inList = highlighted.indexOf(cardId);
     if (inList > -1) {
       return setHighlighted([
@@ -96,7 +98,7 @@ const DailyPuzzle = ({
       return setHighlighted([cardId]);
     }
 
-    setStatus(Status.guessing);
+    console.log("guessing", cardId);
     return setHighlighted([...highlighted, cardId]);
   };
 

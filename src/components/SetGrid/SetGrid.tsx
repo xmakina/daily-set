@@ -34,12 +34,16 @@ const SetGrid = ({
     if (highlighted.length === 3) {
       const cards = highlighted.map((idx) => puzzle[idx]);
       if (isSet(cards[0], cards[1], cards[2])) {
-        return onCorrect(highlighted[0], highlighted[1], highlighted[2]);
+        if (status !== Status.correct) {
+          return onCorrect(highlighted[0], highlighted[1], highlighted[2]);
+        }
       } else {
-        return onWrong(highlighted[0], highlighted[1], highlighted[2]);
+        if (status !== Status.wrong) {
+          return onWrong(highlighted[0], highlighted[1], highlighted[2]);
+        }
       }
     }
-  }, [highlighted, onCorrect, onWrong, puzzle]);
+  }, [highlighted, onCorrect, onWrong, puzzle, status]);
 
   const board = puzzle
     .map(decode)
