@@ -6,61 +6,45 @@ import SetGrid, { Status } from "../components/SetGrid/SetGrid";
 import ShareResult from "../components/ShareResult/ShareResult";
 import Button from "../components/Button/Button";
 import clsx from "clsx";
-import format from "format-duration";
-import HideIcon from "./HideIcon";
-import ShowIcon from "./ShowIcon";
+import Timer from "../components/Timer/Timer";
 
 type Props = {
   time: number;
+  today: number;
   target?: number;
   onClick?: (forward: boolean) => void;
 };
 
-const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
+const DailyPuzzle = ({
+  time = new Date().setHours(0, 0, 0),
+  today = new Date().getTime(),
+  target = 6,
+  onClick = () => {},
+}: Props) => {
   const [puzzle, setPuzzle] = useState(buildPuzzle(12, target, time));
   const [solutions, setSolutions] = useState<number[][]>([]);
   const [highlightSolution, setHighlightSolution] = useState(-1);
   const [solved, setSolved] = useState(false);
   const [status, setStatus] = useState<Status>(Status.guessing);
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
-  const [duration, setDuration] = useState(format(0));
-  const [showTimer, setShowTimer] = useState(false);
-
+  const [duration, setDuration] = useState(0);
   const [guesses, setGuesses] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(function () {
-      if (!solved) {
-        setDuration(format(Date.now() - startTime));
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [startTime, solved]);
+  const [highlighted, setHighlighted] = useState<number[]>([]);
 
   useEffect(() => {
     setPuzzle(buildPuzzle(12, 6, time));
-    setStartTime(Date.now());
+    setHighlighted([]);
 
     setSolutions([]);
     setHighlightSolution(-1);
     setSolved(false);
+    setDuration(0);
   }, [time]);
 
   useEffect(() => {
     if (solutions.length === target) {
       setSolved(true);
     }
-  }, [solutions]);
-
-  useEffect(() => {
-    if (solved) {
-      return setEndTime(Date.now());
-    }
-
-    setEndTime(0);
-  }, [solved]);
+  }, [solutions, target]);
 
   useEffect(() => {
     if (!solved) {
@@ -93,9 +77,27 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
     setStatus(Status.wrong);
   };
 
-  const onGridClick = () => {
+  const onGridClick = (cardId: number) => {
     setHighlightSolution(-1);
+
+    if (solved) {
+      return;
+    }
+
+    const inList = highlighted.indexOf(cardId);
+    if (inList > -1) {
+      return setHighlighted([
+        ...highlighted.slice(0, inList),
+        ...highlighted.slice(inList + 1),
+      ]);
+    }
+
+    if (highlighted.length === 3) {
+      return setHighlighted([cardId]);
+    }
+
     setStatus(Status.guessing);
+    return setHighlighted([...highlighted, cardId]);
   };
 
   return (
@@ -107,29 +109,10 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
             dateStyle: "full",
           }).format(time)}
         </div>
-        <div className="flex justify-center gap-4">
-          <div>
-            <button
-              className="w-6 h-6"
-              onClick={() => setShowTimer(!showTimer)}
-            >
-              {!showTimer && <HideIcon />}
-              {showTimer && <ShowIcon />}
-            </button>
-          </div>
-          <div
-            className={clsx("flex-none tabular-nums", { hidden: !showTimer })}
-          >
-            {duration}
-          </div>
-        </div>
+        <Timer onChange={setDuration} stopped={solved} starting={duration} />
       </div>
       {solved && (
-        <ShareResult
-          guesses={guesses}
-          time={time}
-          duration={endTime - startTime}
-        />
+        <ShareResult guesses={guesses} time={time} duration={duration} />
       )}
       <div className="flex flex-col gap-7 lg:gap-14 justify-center align-middle items-center lg:flex-row">
         {!solved && (
@@ -140,6 +123,7 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
               onWrong={onWrong}
               onClick={onGridClick}
               status={status}
+              highlighted={highlighted}
             />
           </div>
         )}
@@ -154,7 +138,7 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
       </div>
       <div className="flex flex-row gap-4 justify-center">
         <Button onClick={() => onClick(false)}>Yesterday's Puzzle</Button>
-        {time < new Date(Date.now()).setHours(0, 0, 0, 0) && (
+        {time < new Date(today).setHours(0, 0, 0, 0) && (
           <Button onClick={() => onClick(true)}>Tomorrow's Puzzle</Button>
         )}
       </div>

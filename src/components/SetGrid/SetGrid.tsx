@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { decode, type Card as CardType } from "set.ts/dist/src/model/SetCard";
 import SetCard from "../SetCard/SetCard";
 import Grid, { type ItemDetails } from "../Grid/Grid";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { isSet } from "set.ts";
 
 export const Status = {
@@ -16,11 +16,10 @@ export type Status = (typeof Status)[keyof typeof Status];
 type Props = {
   puzzle: CardType[];
   highlighted?: number[];
-  onClick?: () => void;
+  onClick?: (cardId: number) => void;
   onCorrect?: (idxA: number, idxB: number, idxC: number) => void;
   onWrong?: (idxA: number, idxB: number, idxC: number) => void;
   status?: Status;
-  solved?: boolean;
 };
 
 const SetGrid = ({
@@ -29,9 +28,8 @@ const SetGrid = ({
   onWrong = () => {},
   onClick = () => {},
   status = Status.guessing,
-  solved = false,
+  highlighted = [],
 }: Props) => {
-  const [highlighted, setHighlighted] = useState<number[]>([]);
   useEffect(() => {
     if (highlighted.length === 3) {
       const cards = highlighted.map((idx) => puzzle[idx]);
@@ -41,33 +39,7 @@ const SetGrid = ({
         return onWrong(highlighted[0], highlighted[1], highlighted[2]);
       }
     }
-  }, [highlighted]);
-
-  useEffect(() => {
-    setHighlighted([]);
-  }, [puzzle]);
-
-  const handleClick = (cardId: number) => {
-    if (solved) {
-      return;
-    }
-
-    onClick();
-
-    const inList = highlighted.indexOf(cardId);
-    if (inList > -1) {
-      return setHighlighted([
-        ...highlighted.slice(0, inList),
-        ...highlighted.slice(inList + 1),
-      ]);
-    }
-
-    if (highlighted.length === 3) {
-      return setHighlighted([cardId]);
-    }
-
-    return setHighlighted([...highlighted, cardId]);
-  };
+  }, [highlighted, onCorrect, onWrong, puzzle]);
 
   const board = puzzle
     .map(decode)
@@ -91,7 +63,7 @@ const SetGrid = ({
     <div className="flex flex-row flex-wrap gap-4 items-center justify-center p-2 w-full">
       <Grid
         items={board}
-        onClick={handleClick}
+        onClick={onClick}
         className="grid grid-cols-4 grid-rows-3 w-full h-full"
       />
     </div>

@@ -7,22 +7,31 @@ import format from "format-duration";
 type Props = {
   stopped?: boolean;
   onChange: (timer: number) => void;
+  starting?: number;
 };
 
-const Timer = ({ stopped = false, onChange = () => {} }: Props) => {
+const Timer = ({
+  starting = 0,
+  stopped = false,
+  onChange = () => {},
+}: Props) => {
   const [showTimer, setShowTimer] = useState(false);
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(starting);
 
   useEffect(() => {
     const interval = setInterval(function () {
-      console.log("interval");
       if (!stopped) {
+        console.log("interval");
         setCounter(counter + 1);
       }
     }, 1000);
 
     return () => clearInterval(interval);
   }, [counter, stopped]);
+
+  useEffect(() => {
+    setCounter(starting);
+  }, [starting]);
 
   useEffect(() => {
     onChange(counter);
