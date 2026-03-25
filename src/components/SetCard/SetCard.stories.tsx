@@ -42,6 +42,6 @@ type Story = StoryObj<typeof Subject>;
 
 export const Default: Story = {
   args: {
-    shape: "circle"
-  }
+    shape: "circle",
+  },
 };

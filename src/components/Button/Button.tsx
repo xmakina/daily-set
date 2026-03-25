@@ -10,7 +10,10 @@ type Props = {
 const Button = ({ children, className = "", onClick = () => {} }: Props) => {
   return (
     <button
-      className={clsx(className, "bg-gray-800 text-white font-bold py-2 px-4 rounded dark:bg-gray-200 dark:text-black")}
+      className={clsx(
+        className,
+        "bg-gray-800 text-white font-bold py-2 px-4 rounded dark:bg-gray-200 dark:text-black",
+      )}
       onClick={onClick}
     >
       {children}
