@@ -3,8 +3,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DailyPuzzle from "./pages/DailyPuzzle";
 import { useState } from "react";
 
+const getNow = () => Date.now();
+
 function App() {
-  const [time, setTime] = useState(new Date(Date.now()).setHours(0, 0, 0, 0));
+  const [time, setTime] = useState(new Date(getNow()).setHours(0, 0, 0, 0));
 
   const advanceTime = (forward: boolean) => {
     const advance = 1000 * 60 * 60 * 24 * (forward ? 1 : -1);

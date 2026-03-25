@@ -113,8 +113,8 @@ const DailyPuzzle = ({ time, target = 6, onClick = () => {} }: Props) => {
               className="w-6 h-6"
               onClick={() => setShowTimer(!showTimer)}
             >
-              {!showTimer && <HideIcon color={"#FFFFFF"} />}
-              {showTimer && <ShowIcon color={"#FFFFFF"} />}
+              {!showTimer && <HideIcon />}
+              {showTimer && <ShowIcon />}
             </button>
           </div>
           <div
